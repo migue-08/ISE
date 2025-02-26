@@ -1,0 +1,76 @@
+---
+title: "ISE Colombia"
+subtitle: "Tasa de crecimiento del ISE"
+author: "Miguel Martinez"
+date: today
+format: 
+  html:
+    toc: true
+    theme: cosmo
+editor: visual
+execute:
+  warning: false
+---
+
+This document consists of the process of constructing the graph of the evolution of the Indice del Seguimiento a la Economía (ISE). This is an index that yields the evolution of the economic activity in the Colombian economy in the short run. You can find the data set [here](https://www.dane.gov.co/index.php/estadisticas-por-tema/cuentas-nacionales/indicador-de-seguimiento-a-la-economia-ise).
+
+The first step is to load the following libraries
+
+```{r}
+
+library(tidyverse)
+library(readxl)
+
+```
+
+Then, we load the data:
+
+## Load data
+
+```{r}
+
+data = read_excel("Tasa de crecimiento ISE.xlsx")
+
+data
+```
+
+Now we reshape the data to the *long* or *stacked* format:
+
+```{r}
+
+data = data |> 
+  pivot_longer(cols = 3:4, names_to ="Serie ISE",
+               values_to = "value")
+
+data
+```
+
+## Graph
+
+```{r}
+
+zero = 0  # Baseline
+
+ggplot(data) +
+  geom_point(aes(x = Mes, y = value, colour = `Serie ISE`)) +
+  geom_line(aes(x = Mes, y = value, colour = `Serie ISE`)) +
+  geom_hline(yintercept = zero, color = "black", linetype = 2) +
+  facet_grid(. ~ Año) +
+  scale_x_continuous(breaks = seq(1,12, by = 1)) +
+  scale_y_continuous(breaks = seq(-4,18, by = 2)) +
+  theme_classic() +
+  labs(title = "Tasa de crecimiento anual del Indicador de Seguimiento a la Economía (ISE)",
+       subtitle = "Serie original y serie ajustada por efecto estacional y calendario
+       2022p - 2024pr (diciembre)",
+       x = "Meses",
+       y = "Variación (%)",
+       caption = "Fuente: Elaboración propia con datos del DANE, ISE") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        legend.position = "bottom")
+
+```
+
+## Conclusion
+
+As you can see, both indexes (original and adjusted by stationary and calendar effects) are capturing the development of the real economic activity in the short run in Colombia. The year 2022 was exceptional, but if we see the long picture, we can acknowledge that the potential growth of the national economy is around 3%.
