@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "ISE.html",
+    "href": "ISE.html",
+    "title": "ISE Colombia",
+    "section": "",
+    "text": "This document consists of the process of constructing the graph of the evolution of the Indice del Seguimiento a la Economía (ISE). This is an index that yields the evolution of the economic activity in the Colombian economy in the short run. You can find the data set here.\nThe first step is to load the following libraries\nlibrary(tidyverse)\nlibrary(readxl)\nThen, we load the data:"
+  },
+  {
+    "objectID": "ISE.html#load-data",
+    "href": "ISE.html#load-data",
+    "title": "ISE Colombia",
+    "section": "Load data",
+    "text": "Load data\n\ndata = read_excel(\"Tasa de crecimiento ISE.xlsx\")\n\ndata\n\n# A tibble: 36 × 4\n     Año   Mes Original `Ajustada por efecto estacional y calendario`\n   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;                                         &lt;dbl&gt;\n 1  2022     1     8.20                                          7.88\n 2  2022     2     6.72                                          6.88\n 3  2022     3     7.04                                          6.78\n 4  2022     4    10.3                                           9.94\n 5  2022     5    16.8                                          16.5 \n 6  2022     6     7.81                                          7.93\n 7  2022     7     6.19                                          6.08\n 8  2022     8     8.75                                          8.65\n 9  2022     9     4.28                                          4.32\n10  2022    10     3.69                                          3.52\n# ℹ 26 more rows\n\n\nNow we reshape the data to the long or stacked format:\n\ndata = data |&gt; \n  pivot_longer(cols = 3:4, names_to =\"Serie ISE\",\n               values_to = \"value\")\n\ndata\n\n# A tibble: 72 × 4\n     Año   Mes `Serie ISE`                                 value\n   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                                       &lt;dbl&gt;\n 1  2022     1 Original                                     8.20\n 2  2022     1 Ajustada por efecto estacional y calendario  7.88\n 3  2022     2 Original                                     6.72\n 4  2022     2 Ajustada por efecto estacional y calendario  6.88\n 5  2022     3 Original                                     7.04\n 6  2022     3 Ajustada por efecto estacional y calendario  6.78\n 7  2022     4 Original                                    10.3 \n 8  2022     4 Ajustada por efecto estacional y calendario  9.94\n 9  2022     5 Original                                    16.8 \n10  2022     5 Ajustada por efecto estacional y calendario 16.5 \n# ℹ 62 more rows"
+  },
+  {
+    "objectID": "ISE.html#graph",
+    "href": "ISE.html#graph",
+    "title": "ISE Colombia",
+    "section": "Graph",
+    "text": "Graph\n\nzero = 0  # Baseline\n\nggplot(data) +\n  geom_point(aes(x = Mes, y = value, colour = `Serie ISE`)) +\n  geom_line(aes(x = Mes, y = value, colour = `Serie ISE`)) +\n  geom_hline(yintercept = zero, color = \"black\", linetype = 2) +\n  facet_grid(. ~ Año) +\n  scale_x_continuous(breaks = seq(1,12, by = 1)) +\n  scale_y_continuous(breaks = seq(-4,18, by = 2)) +\n  theme_classic() +\n  labs(title = \"Tasa de crecimiento anual del Indicador de Seguimiento a la Economía (ISE)\",\n       subtitle = \"Serie original y serie ajustada por efecto estacional y calendario\n       2022p - 2024pr (diciembre)\",\n       x = \"Meses\",\n       y = \"Variación (%)\",\n       caption = \"Fuente: Elaboración propia con datos del DANE, ISE\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        legend.position = \"bottom\")"
+  },
+  {
+    "objectID": "ISE.html#conclusion",
+    "href": "ISE.html#conclusion",
+    "title": "ISE Colombia",
+    "section": "Conclusion",
+    "text": "Conclusion\nAs you can see, both indexes (original and adjusted by stationary and calendar effects) are capturing the development of the real economic activity in the short run in Colombia. The year 2022 was exceptional, but if we see the long picture, we can acknowledge that the potential growth of the national economy is around 3%."
+  }
+]
