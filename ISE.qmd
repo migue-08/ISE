@@ -1,6 +1,6 @@
 ---
 title: "ISE Colombia"
-subtitle: "Tasa de crecimiento del ISE"
+subtitle: "Growth rate of the leading economic indicator ISE"
 author: "Miguel Martinez"
 date: today
 format: 
