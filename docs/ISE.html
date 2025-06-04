@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.30">
+<meta name="generator" content="quarto-1.7.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Miguel Martinez">
-<meta name="dcterms.date" content="2025-05-16">
+<meta name="dcterms.date" content="2025-06-03">
 
 <title>ISE Colombia</title>
 <style>
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -120,6 +120,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#indexing" id="toc-indexing" class="nav-link" data-scroll-target="#indexing">Indexing</a></li>
+  <li><a href="#lengthening-data" id="toc-lengthening-data" class="nav-link" data-scroll-target="#lengthening-data"><strong>Lengthening Data</strong></a></li>
+  <li><a href="#merging-dataframes" id="toc-merging-dataframes" class="nav-link" data-scroll-target="#merging-dataframes">Merging Dataframes</a></li>
+  <li><a href="#dtype-transformation" id="toc-dtype-transformation" class="nav-link" data-scroll-target="#dtype-transformation">Dtype transformation</a></li>
+  <li><a href="#percentage-change" id="toc-percentage-change" class="nav-link" data-scroll-target="#percentage-change">Percentage change</a></li>
+  <li><a href="#select-and-filtering-data" id="toc-select-and-filtering-data" class="nav-link" data-scroll-target="#select-and-filtering-data">Select and filtering data</a></li>
+  <li><a href="#reshape-data" id="toc-reshape-data" class="nav-link" data-scroll-target="#reshape-data">Reshape data</a></li>
   <li><a href="#graph" id="toc-graph" class="nav-link" data-scroll-target="#graph">Graph</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
@@ -148,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 16, 2025</p>
+      <p class="date">June 3, 2025</p>
     </div>
   </div>
   
@@ -170,77 +177,264 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">"Tasa de crecimiento ISE.xlsx"</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 48 × 4
-     Año   Mes Original `Ajustada por efecto estacional y calendario`
-   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;                                         &lt;dbl&gt;
- 1  2022     1     8.22                                          7.86
- 2  2022     2     6.78                                          6.91
- 3  2022     3     7.05                                          6.82
- 4  2022     4    10.2                                           9.88
- 5  2022     5    16.7                                          16.5 
- 6  2022     6     7.70                                          7.86
- 7  2022     7     6.09                                          6.03
- 8  2022     8     8.76                                          8.66
- 9  2022     9     4.26                                          4.29
-10  2022    10     4.03                                          3.87
-# ℹ 38 more rows</code></pre>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"anex-ISE-9actividades-mar2025.xlsx"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">sheet =</span> <span class="st">"Cuadro 1"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">range =</span> <span class="st">"A42:IJ57"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Data adjusted for seasonal and calendar effects</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"anex-ISE-9actividades-mar2025.xlsx"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">sheet =</span> <span class="st">"Cuadro 2"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">range =</span> <span class="st">"A11:IJ26"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>Now we reshape the data to the <em>long</em> or <em>stacked</em> format:</p>
+<p>Keep in mind that original data is already in annual percentage change. But data adjusted for seasonal and calendar effects are in levels, so we need to compute the pct_change.</p>
+</section>
+<section id="indexing" class="level2">
+<h2 class="anchored" data-anchor-id="indexing">Indexing</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">names_to =</span><span class="st">"Serie ISE"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">=</span> <span class="st">"Año"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">2</span>, <span class="dv">1</span>] <span class="ot">=</span> <span class="st">"Mes"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Data adjusted for seasonal and calendar effects</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>df2[<span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">=</span> <span class="st">"Año"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>df2[<span class="dv">2</span>, <span class="dv">1</span>] <span class="ot">=</span> <span class="st">"Mes"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="lengthening-data" class="level2">
+<h2 class="anchored" data-anchor-id="lengthening-data"><strong>Lengthening Data</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> df1 <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">14</span><span class="sc">:</span><span class="dv">244</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">fill</span>(value) <span class="sc">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="dv">1</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">values_from =</span> value) <span class="sc">|&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Año<span class="sc">:</span><span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data adjusted for seasonal and calendar effects</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> df2 <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">244</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">fill</span>(value) <span class="sc">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="dv">1</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">values_from =</span> value) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Año<span class="sc">:</span><span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="merging-dataframes" class="level2">
+<h2 class="anchored" data-anchor-id="merging-dataframes">Merging Dataframes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we merge both dataframes: original and data adjusted for seasonal and calendar effects by (año and mes)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> df1 <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">inner_join</span>(df2,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Año"</span>, <span class="st">"Mes"</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">".Original"</span>, <span class="st">".Ajustado"</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 96 × 4
-     Año   Mes `Serie ISE`                                 value
-   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                                       &lt;dbl&gt;
- 1  2022     1 Original                                     8.22
- 2  2022     1 Ajustada por efecto estacional y calendario  7.86
- 3  2022     2 Original                                     6.78
- 4  2022     2 Ajustada por efecto estacional y calendario  6.91
- 5  2022     3 Original                                     7.05
- 6  2022     3 Ajustada por efecto estacional y calendario  6.82
- 7  2022     4 Original                                    10.2 
- 8  2022     4 Ajustada por efecto estacional y calendario  9.88
- 9  2022     5 Original                                    16.7 
-10  2022     5 Ajustada por efecto estacional y calendario 16.5 
-# ℹ 86 more rows</code></pre>
+<pre><code># A tibble: 231 × 30
+   Año   Mes        NA.Original Actividades primarias.O…¹ Agricultura, ganader…²
+   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;                     &lt;chr&gt;                 
+ 1 2006  Enero      Marzo       1.8499680375957581        1.8499680375957581    
+ 2 2006  Febrero    Marzo       1.8943484806048616        1.8943484806048616    
+ 3 2006  Marzo      Marzo       4.5628166373055308        4.5628166373055308    
+ 4 2006  Abril      Marzo       -3.2072053495056139       -3.2072053495056139   
+ 5 2006  Mayo       Marzo       4.0664904626843281        4.0664904626843281    
+ 6 2006  Junio      Marzo       -2.5686170540963786       -2.5686170540963786   
+ 7 2006  Julio      Marzo       5.4687458055799851        5.4687458055799851    
+ 8 2006  Agosto     Marzo       2.3721401633111299        2.3721401633111299    
+ 9 2006  Septiembre Marzo       3.1447189156467346        3.1447189156467346    
+10 2006  Octubre    Marzo       4.9312234681958955        4.9312234681958955    
+# ℹ 221 more rows
+# ℹ abbreviated names: ¹​`Actividades primarias.Original`,
+#   ²​`Agricultura, ganadería, caza, silvicultura y pesca; Explotación de minas y canteras.Original`
+# ℹ 25 more variables: `Actividades secundarias.Original` &lt;chr&gt;,
+#   `Industrias manufactureras; Construcción.Original` &lt;chr&gt;,
+#   `Actividades terciarias.Original` &lt;chr&gt;,
+#   `Suministro de electricidad, gas, vapor y aire acondicionado; Distribución de agua; evacuación y tratamiento de aguas residuales, gestión de desechos y actividades de saneamiento ambiental.Original` &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+</section>
+<section id="dtype-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="dtype-transformation">Dtype transformation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First notice that some months have strings, so we need to replace them</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>año <span class="ot">=</span> data <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">distinct</span>(Año)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>año<span class="sc">$</span>Año</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "2006"   "2007"   "2008"   "2009"   "2010"   "2011"   "2012"   "2013"  
+ [9] "2014"   "2015"   "2016"   "2017"   "2018"   "2019"   "2020"   "2021"  
+[17] "2022"   "2023p"  "2024pr" "2025pr"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, we replace the strings next to the years 2023, 2024 and 2025</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    Año <span class="ot">=</span> stringr<span class="sc">::</span><span class="fu">str_remove_all</span>(Año, <span class="st">"[pr]"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we transform the "string" format of months to "numeric"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mes =</span> <span class="fu">recode</span>(Mes,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Enero"</span> <span class="ot">=</span> <span class="dv">01</span>, <span class="st">"Febrero"</span> <span class="ot">=</span> <span class="dv">02</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Marzo"</span> <span class="ot">=</span> <span class="dv">03</span>, <span class="st">"Abril"</span> <span class="ot">=</span> <span class="dv">04</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Mayo"</span> <span class="ot">=</span> <span class="dv">05</span>, <span class="st">"Junio"</span> <span class="ot">=</span> <span class="dv">06</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Julio"</span> <span class="ot">=</span> <span class="dv">07</span>, <span class="st">"Agosto"</span> <span class="ot">=</span> <span class="dv">08</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Septiembre"</span> <span class="ot">=</span> <span class="dv">09</span>, <span class="st">"Octubre"</span> <span class="ot">=</span> <span class="dv">10</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Noviembre"</span> <span class="ot">=</span> <span class="dv">11</span>, <span class="st">"Diciembre"</span> <span class="ot">=</span> <span class="dv">12</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we transform the remaining variables to numeric</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="dv">1</span>, <span class="dv">4</span><span class="sc">:</span><span class="dv">30</span>), as.numeric)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 231
+Columns: 30
+$ Año                                                                                                                                                                                                                                                                                                                                                                                                                                                            &lt;dbl&gt; …
+$ Mes                                                                                                                                                                                                                                                                                                                                                                                                                                                            &lt;dbl&gt; …
+$ NA.Original                                                                                                                                                                                                                                                                                                                                                                                                                                                    &lt;chr&gt; …
+$ `Actividades primarias.Original`                                                                                                                                                                                                                                                                                                                                                                                                                               &lt;dbl&gt; …
+$ `Agricultura, ganadería, caza, silvicultura y pesca; Explotación de minas y canteras.Original`                                                                                                                                                                                                                                                                                                                                                                 &lt;dbl&gt; …
+$ `Actividades secundarias.Original`                                                                                                                                                                                                                                                                                                                                                                                                                             &lt;dbl&gt; …
+$ `Industrias manufactureras; Construcción.Original`                                                                                                                                                                                                                                                                                                                                                                                                             &lt;dbl&gt; …
+$ `Actividades terciarias.Original`                                                                                                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …
+$ `Suministro de electricidad, gas, vapor y aire acondicionado; Distribución de agua; evacuación y tratamiento de aguas residuales, gestión de desechos y actividades de saneamiento ambiental.Original`                                                                                                                                                                                                                                                         &lt;dbl&gt; …
+$ `Comercio al por mayor y al por menor; Reparación de vehículos automotores y motocicletas; Transporte y almacenamiento; Alojamiento y servicios de comida.Original`                                                                                                                                                                                                                                                                                            &lt;dbl&gt; …
+$ `Información y comunicaciones.Original`                                                                                                                                                                                                                                                                                                                                                                                                                        &lt;dbl&gt; …
+$ `Actividades financieras y de seguros.Original`                                                                                                                                                                                                                                                                                                                                                                                                                &lt;dbl&gt; …
+$ `Actividades inmobiliarias.Original`                                                                                                                                                                                                                                                                                                                                                                                                                           &lt;dbl&gt; …
+$ `Actividades profesionales, científicas y técnicas; Actividades de servicios administrativos y de apoyo.Original`                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …
+$ `Administración pública y defensa; planes de seguridad social de afiliación obligatoria; Educación; Actividades de atención de la salud humana y de servicios sociales; Actividades artísticas, de entretenimiento y recreación y otras actividades de servicios; Actividades de los hogares individuales en calidad de empleadores; actividades no diferenciadas de los hogares individuales como productores de bienes y servicios para uso propio.Original` &lt;dbl&gt; …
+$ `Indicador de Seguimiento a la Economía.Original`                                                                                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …
+$ NA.Ajustado                                                                                                                                                                                                                                                                                                                                                                                                                                                    &lt;dbl&gt; …
+$ `Actividades primarias.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                               &lt;dbl&gt; …
+$ `Agricultura, ganadería, caza, silvicultura y pesca; Explotación de minas y canteras.Ajustado`                                                                                                                                                                                                                                                                                                                                                                 &lt;dbl&gt; …
+$ `Actividades secundarias.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                             &lt;dbl&gt; …
+$ `Industrias manufactureras; Construcción.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                             &lt;dbl&gt; …
+$ `Actividades terciarias.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …
+$ `Suministro de electricidad, gas, vapor y aire acondicionado; Distribución de agua; evacuación y tratamiento de aguas residuales, gestión de desechos y actividades de saneamiento ambiental.Ajustado`                                                                                                                                                                                                                                                         &lt;dbl&gt; …
+$ `Comercio al por mayor y al por menor; Reparación de vehículos automotores y motocicletas; Transporte y almacenamiento; Alojamiento y servicios de comida.Ajustado`                                                                                                                                                                                                                                                                                            &lt;dbl&gt; …
+$ `Información y comunicaciones.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                        &lt;dbl&gt; …
+$ `Actividades financieras y de seguros.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                &lt;dbl&gt; …
+$ `Actividades inmobiliarias.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                                           &lt;dbl&gt; …
+$ `Actividades profesionales, científicas y técnicas; Actividades de servicios administrativos y de apoyo.Ajustado`                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …
+$ `Administración pública y defensa; planes de seguridad social de afiliación obligatoria; Educación; Actividades de atención de la salud humana y de servicios sociales; Actividades artísticas, de entretenimiento y recreación y otras actividades de servicios; Actividades de los hogares individuales en calidad de empleadores; actividades no diferenciadas de los hogares individuales como productores de bienes y servicios para uso propio.Ajustado` &lt;dbl&gt; …
+$ `Indicador de Seguimiento a la Economía.Ajustado`                                                                                                                                                                                                                                                                                                                                                                                                              &lt;dbl&gt; …</code></pre>
+</div>
+</div>
+</section>
+<section id="percentage-change" class="level2">
+<h2 class="anchored" data-anchor-id="percentage-change">Percentage change</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recall that adjusted data for seasonal and calendar effects are in levels</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># So we need to compute the percentage_change</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía.Ajustado</span><span class="st">`</span> <span class="ot">=</span> (</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía.Ajustado</span><span class="st">`</span> <span class="sc">/</span> <span class="fu">lag</span>(<span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía.Ajustado</span><span class="st">`</span>, <span class="at">n =</span> <span class="dv">12</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="select-and-filtering-data" class="level2">
+<h2 class="anchored" data-anchor-id="select-and-filtering-data">Select and filtering data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we are selecting the required series and filtering from 2022</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Año, Mes,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía.Original</span><span class="st">`</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">`</span><span class="at">Indicador de Seguimiento a la Economía.Ajustado</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(Año <span class="sc">&gt;=</span> <span class="dv">2022</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 39
+Columns: 4
+$ Año                                               &lt;dbl&gt; 2022, 2022, 2022, 20…
+$ Mes                                               &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7,…
+$ `Indicador de Seguimiento a la Economía.Original` &lt;dbl&gt; 8.22090161, 6.781006…
+$ `Indicador de Seguimiento a la Economía.Ajustado` &lt;dbl&gt; 7.86211770, 6.909292…</code></pre>
+</div>
+</div>
+</section>
+<section id="reshape-data" class="level2">
+<h2 class="anchored" data-anchor-id="reshape-data">Reshape data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we reshape the data to the long or stacked format:</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">names_to =</span><span class="st">"Serie ISE"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 78 × 4
+     Año   Mes `Serie ISE`                                     value
+   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                                           &lt;dbl&gt;
+ 1  2022     1 Indicador de Seguimiento a la Economía.Original  8.22
+ 2  2022     1 Indicador de Seguimiento a la Economía.Ajustado  7.86
+ 3  2022     2 Indicador de Seguimiento a la Economía.Original  6.78
+ 4  2022     2 Indicador de Seguimiento a la Economía.Ajustado  6.91
+ 5  2022     3 Indicador de Seguimiento a la Economía.Original  7.05
+ 6  2022     3 Indicador de Seguimiento a la Economía.Ajustado  6.82
+ 7  2022     4 Indicador de Seguimiento a la Economía.Original 10.2 
+ 8  2022     4 Indicador de Seguimiento a la Economía.Ajustado  9.88
+ 9  2022     5 Indicador de Seguimiento a la Economía.Original 16.7 
+10  2022     5 Indicador de Seguimiento a la Economía.Ajustado 16.5 
+# ℹ 68 more rows</code></pre>
 </div>
 </div>
 </section>
 <section id="graph" class="level2">
 <h2 class="anchored" data-anchor-id="graph">Graph</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>zero <span class="ot">=</span> <span class="dv">0</span>  <span class="co"># Baseline</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data) <span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Mes, <span class="at">y =</span> value, <span class="at">colour =</span> <span class="st">`</span><span class="at">Serie ISE</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> Mes, <span class="at">y =</span> value, <span class="at">colour =</span> <span class="st">`</span><span class="at">Serie ISE</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> zero, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> Año) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">18</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Tasa de crecimiento anual del Indicador de Seguimiento a la Economía (ISE)"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Serie original y serie ajustada por efecto estacional y calendario</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">       2022p - 2024pr (diciembre)"</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Meses"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Variación (%)"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia con datos del DANE, ISE"</span>) <span class="sc">+</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption.position =</span> <span class="st">"panel"</span>,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>),</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>zero <span class="ot">=</span> <span class="dv">0</span>  <span class="co"># Baseline</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Mes, <span class="at">y =</span> value, <span class="at">colour =</span> <span class="st">`</span><span class="at">Serie ISE</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> Mes, <span class="at">y =</span> value, <span class="at">colour =</span> <span class="st">`</span><span class="at">Serie ISE</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> zero, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> Año) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">18</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Tasa de crecimiento anual del Indicador de Seguimiento a la Economía (ISE)"</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Serie original y serie ajustada por efecto estacional y calendario</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="st">       2022 - 2025pr (marzo)"</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Meses"</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Variación (%)"</span>,</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia con datos del DANE, ISE"</span>) <span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption.position =</span> <span class="st">"panel"</span>,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>),</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ISE_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="ISE_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
